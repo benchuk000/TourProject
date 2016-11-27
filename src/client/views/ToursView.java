@@ -9,9 +9,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ToursView extends Frame{
     private JPanel panel;
@@ -24,10 +24,15 @@ public class ToursView extends Frame{
     private JTextField countOfDaysField;
     private DefaultTableModel tableModel;
     private JButton buttonAccept;
+    private JButton backButton;
+    ArrayList<Tour> tourList;
 
     public ToursView() {
         panel.setPreferredSize(new Dimension(1200, 700));
         Controller controller = new Controller(this, panel);
+
+        backButton.addActionListener(controller);
+        backButton.setActionCommand("backToMenu");
 
 
         buttonAccept.addActionListener(controller);
@@ -37,18 +42,7 @@ public class ToursView extends Frame{
             public void mouseClicked(MouseEvent event) {
                 int selectedTourIndex = table.rowAtPoint(event.getPoint());
 
-                Tour selectedDeveice = new Tour(
-                        0,
-                        table.getValueAt(selectedTourIndex, 0).toString(),
-                        table.getValueAt(selectedTourIndex, 2).toString(),
-                        table.getValueAt(selectedTourIndex, 1).toString(),
-                        new Date(table.getValueAt(selectedTourIndex, 3).toString()),
-                        new Date(table.getValueAt(selectedTourIndex, 4).toString()),
-                        Integer.parseInt(table.getValueAt(selectedTourIndex, 5).toString()),
-                        Integer.parseInt(table.getValueAt(selectedTourIndex, 6).toString())
-                );
-
-                controller.currentState.setSelectedTour(selectedDeveice);
+                controller.currentState.setSelectedTour(tourList.get(selectedTourIndex));
                 controller.actionPerformed(new ActionEvent(controller, ActionEvent.ACTION_PERFORMED, "viewTour"));
             }
         });
@@ -138,7 +132,7 @@ public class ToursView extends Frame{
     }
 
     public void setData(Serializable obj, List list) {
-        ArrayList<Tour> tourList = (ArrayList<Tour>) list;
+        tourList = (ArrayList<Tour>) list;
 
         for (int rowIndex = tableModel.getRowCount() - 1; rowIndex >= 0; rowIndex--) {
             tableModel.removeRow(rowIndex);

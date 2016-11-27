@@ -4,6 +4,7 @@ import client.controllers.Controller;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class MenuView extends Frame{
     private JPanel panel;
@@ -14,6 +15,7 @@ public class MenuView extends Frame{
     public MenuView() {
         panel.setPreferredSize(new Dimension(300, 200));
         Controller ctrl = new Controller(this, panel);
+
 
         buttonViewTours.addActionListener(ctrl);
         buttonViewTours.setActionCommand("viewTours");

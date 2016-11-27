@@ -11,9 +11,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by olya on 13.11.16.
- */
 public class TourDAO implements TourDAOInterface {
     private Connection connection;
 
@@ -109,6 +106,12 @@ public class TourDAO implements TourDAOInterface {
         if (tour.getCountOfDays() != 0) {
             query += conditionExist ? " AND " : " WHERE ";
             query += "countOfDays = " + tour.getCountOfDays() + "";
+        }
+
+        if (tour.getId() != 0 ) {
+            query += conditionExist ? " AND " : " WHERE ";
+            conditionExist = true;
+            query += "id = '" + tour.getId() + "'";
         }
 
         System.out.println(query);

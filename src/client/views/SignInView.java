@@ -2,8 +2,12 @@ package client.views;
 
 import client.controllers.Controller;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class SignInView extends Frame {
     private JPanel panel;
@@ -29,4 +33,6 @@ public class SignInView extends Frame {
         signInButton.setActionCommand("signIn");
         signUpViewButton.setActionCommand("signUpView");
     }
+
+
 }

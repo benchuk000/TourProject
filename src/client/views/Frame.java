@@ -9,4 +9,8 @@ public class Frame extends JFrame{
     public void setData(Serializable obj, List list){
 
     }
+
+    public void setData(Serializable obj){
+
+    }
 }

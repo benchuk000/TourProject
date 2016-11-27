@@ -1,5 +1,6 @@
 package server.models.DAOFactory;
 
+import server.models.DAO.OrderDAO;
 import server.models.DAO.TourDAO;
 import server.models.DAO.UserDAO;
 
@@ -36,5 +37,8 @@ public class DAOFactory {
     }
     public TourDAO getTourDAO() {
         return new TourDAO();
+    }
+    public OrderDAO getOrderDAO() {
+        return new OrderDAO();
     }
 }

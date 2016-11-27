@@ -1,9 +1,8 @@
 package client.action;
 
 import client.main.Client;
-import client.views.SignInView;
-import client.views.SignUpView;
-import client.views.ToursView;
+import client.views.*;
+import common.classes.Order;
 import common.classes.Tour;
 import common.classes.User;
 
@@ -95,5 +94,80 @@ public class Action {
         }
 
         return null;
+    }
+
+    public static boolean addOrder(Order order){
+        try {
+            return rmi.getStub().addOrder(order);
+
+        } catch (RemoteException e) {
+            System.err.println("Error connecting to stub");
+        }
+
+        return false;
+    }
+    public static List<Order> getOrders(Order order){
+        try{
+            return rmi.getStub().getOrders(order);
+        }
+        catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    public static void viewSelectedOrder(OrderView view){
+        int selectedIndexOrder = view.getListViewOrder().getSelectedIndex();
+        Order selectedOrder = view.getOrdersList().get(selectedIndexOrder);
+
+        String DataString =
+                "Название: " + selectedOrder.getTour().getName() + '\n' +
+                        "Страна: " + selectedOrder.getTour().getCost() + '\n' +
+                        "Цена: " + selectedOrder.getTour().getCost() + '\n' +
+                        "Город: " + selectedOrder.getTour().getCountry() + '\n' +
+                        "Дата начала тура: " + selectedOrder.getTour().getStartDate() + '\n' +
+                        "Дата окончания тура: " +selectedOrder.getTour().getEndDate() + '\n' +
+                        "Количество дней: " +selectedOrder.getTour().getCountOfDays() +'\n' ;
+
+        view.getTextPane().setText(DataString);
+
+    }
+    public static boolean DeleteSelectedOrder(OrderView view){
+        int selectedItemIndex = view.getListViewOrder().getSelectedIndex();
+
+        try{
+            boolean Removed = rmi.getStub().DeleteOrder(view.getOrdersList().get(selectedItemIndex).getId());
+
+            if (Removed) view.getJlistModel().remove(selectedItemIndex);
+
+            return Removed;
+        }
+        catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public static User updateDataUser(ViewEditUser view, User currentUser){
+        User userUpdata = new User(
+                currentUser.getId(),
+                currentUser.getLogin(),
+                currentUser.getPassword(),
+                view.getEditEmailField().getText(),
+                currentUser.getType(),
+                view.getEditNameField().getText(),
+                view.getEditSurnametField().getText()
+        );
+
+        try{
+            boolean isUpdated = rmi.getStub().updateDataUser(userUpdata.getId(), userUpdata);
+
+            if (isUpdated) return userUpdata;
+        }
+        catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
     }
 }

@@ -135,10 +135,12 @@ public class UserDAO implements UserDAOInterface{
                 "login = '" + user.getLogin() + "', " +
                 "password = '" + user.getPassword() + "', " +
                 "email = '" + user.getEmail() + "', " +
-                "type = '" + user.getType() + "' " +
-                "userName = '" + user.getUserName() + "' " +
+                "type = '" + user.getType() + "', " +
+                "userName = '" + user.getUserName() + "', " +
                 "userSurname = '" + user.getUserSurname() + "' " +
                 "WHERE id = '" + id + "';";
+
+        System.out.println(query);
 
         try {
             Statement statement = connection.createStatement();

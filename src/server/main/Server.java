@@ -1,8 +1,11 @@
 package server.main;
 
+import client.views.OrderView;
+import common.classes.Order;
 import common.classes.Tour;
 import common.classes.User;
 import server.api.API;
+import server.models.DAO.OrderDAO;
 import server.models.DAO.TourDAO;
 import server.models.DAO.UserDAO;
 import server.models.DAOFactory.DAOFactory;
@@ -20,6 +23,7 @@ public class Server implements API{
 
     private UserDAO userDAO;
     private TourDAO tourDAO;
+    private OrderDAO orderDAO;
 
     private static Server instance;
 
@@ -35,6 +39,7 @@ public class Server implements API{
             DAOFactory daoFactory = new DAOFactory();
             userDAO = daoFactory.getUserDAO();
             tourDAO = daoFactory.getTourDAO();
+            orderDAO = daoFactory.getOrderDAO();
 
             numberOfUsers = 0;
 
@@ -87,5 +92,29 @@ public class Server implements API{
     @Override
     public List<Tour> getTours(Tour tour) throws RemoteException {
         return tourDAO.findTour(tour);
+    }
+
+    @Override
+    public boolean addOrder(Order order) throws RemoteException {
+        return orderDAO.addOrder(order);
+    }
+
+    @Override
+    public List<Order> getOrders(Order order) throws RemoteException {
+        return orderDAO.findOrder(order);
+    }
+
+    @Override
+    public boolean updateDataUser(int id, User user) throws RemoteException {
+        boolean isUpdated = userDAO.updateUser(id, user);
+
+        return isUpdated;
+    }
+
+    @Override
+    public boolean DeleteOrder(int id)  {
+        boolean Removed = orderDAO.deleteOrder(id);
+
+        return Removed;
     }
 }

@@ -8,7 +8,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TourDAO implements TourDAOInterface {
@@ -27,9 +29,18 @@ public class TourDAO implements TourDAOInterface {
         String startDate = sdf.format(obj.getStartDate());
         String endDate   = sdf.format(obj.getEndDate());
 
-        String query = "INSERT INTO Tour (name, , country, city, startDate, endDate, cost, countOfDays) " +
-                "VALUES ('" + obj.getName() + "', '" + obj.getCountry() + "', '" + obj.getCity() + "', '" + startDate + "', '" + endDate + "', '" + obj.getCost() + "', '" + obj.
-        getCountOfDays() + "');";
+        String query = "INSERT INTO Tour (name, , country, city, startDate, endDate, cost, countOfDays";
+
+        if (obj.getPhotoLink().equals("")) query += ")";
+        else query += ", photoLink)";
+
+        query += ") VALUES ('" + obj.getName() + "', '" + obj.getCountry() + "', '" + obj.getCity() + "', '" + startDate + "', '" + endDate + "', '" + obj.getCost() + "', '" + obj.
+        getCountOfDays();
+
+        if(obj.getPhotoLink().equals("")) query +=  "');";
+        else query += "', '" + obj.getPhotoLink() + "');";
+
+        query += "');";
 
         try {
             Statement statement = connection.createStatement();
@@ -129,7 +140,8 @@ public class TourDAO implements TourDAOInterface {
                         result.getDate("startDate"),
                         result.getDate("endDate"),
                         result.getInt("cost"),
-                        result.getInt("countOfDays")
+                        result.getInt("countOfDays"),
+                        result.getString("photoLink")
                 ));
             }
 
@@ -145,15 +157,18 @@ public class TourDAO implements TourDAOInterface {
     public boolean updateTour(int id, Tour tour) {
         boolean isUpdated = false;
 
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
         String query = "UPDATE Tour SET " +
                 "id = '" + tour.getId() + "', " +
                 "name = '" + tour.getName() + "', " +
-                "contry = '" + tour.getCountry() + "', " +
+                "country = '" + tour.getCountry() + "', " +
                 "city = '" + tour.getCity() + "', " +
-                "startDate = '" + tour.getStartDate() + "' " +
-                "endDate = '" + tour.getEndDate() + "' " +
+                "startDate = '" + format.format(tour.getStartDate()) + "', " +
+                "endDate = '" + format.format(tour.getEndDate()) + "', " +
                 "cost = " + tour.getCost() + ", " +
-                "countOfFays = '" + tour.getCountOfDays() + "' " +
+                "countOfDays = '" + tour.getCountOfDays() + "', " +
+                "photoLink = '" + tour.getPhotoLink() + "' " +
                 "WHERE id = '" + id + "';";
 
         try {
@@ -161,6 +176,7 @@ public class TourDAO implements TourDAOInterface {
             isUpdated = statement.executeUpdate(query) > 0;
 
         } catch (SQLException e) {
+            e.printStackTrace();
             System.out.println("Error updating tour");
         }
 

@@ -88,7 +88,7 @@ public class OrderDAO implements OrderDAOInterface{
             ResultSet result = statement.executeQuery(query);
 
             while (result.next()) {
-                Tour tour = tourDAO.findTour(new Tour(result.getInt("tour_id"), "", "", "", null, null,  0, 0)).get(0);
+                Tour tour = tourDAO.findTour(new Tour(result.getInt("tour_id"), "", "", "", null, null,  0, 0, "")).get(0);
                 searched.add(new Order(
                         result.getInt("id"),
                         new User(result.getInt("user_id"), "", "" ,"", 0, "", ""),

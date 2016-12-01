@@ -12,8 +12,9 @@ public class Tour implements Serializable{
     private Date endDate;
     private int cost;
     private int countOfDays;
+    private String photoLink;
 
-    public Tour(int id, String name, String country, String city, Date startDate, Date endDate, int cost, int countOfDays) {
+    public Tour(int id, String name, String country, String city, Date startDate, Date endDate, int cost, int countOfDays, String photoLink) {
         this.id = id;
         this.name = name;
         this.country = country;
@@ -22,6 +23,7 @@ public class Tour implements Serializable{
         this.endDate = endDate;
         this.cost = cost;
         this.countOfDays = countOfDays;
+        this.photoLink = photoLink;
     }
 
     public int getId() {
@@ -86,5 +88,13 @@ public class Tour implements Serializable{
 
     public void setCountOfDays(int countOfDays) {
         this.countOfDays = countOfDays;
+    }
+
+    public String getPhotoLink() {
+        return photoLink;
+    }
+
+    public void setPhotoLink(String photoLink) {
+        this.photoLink = photoLink;
     }
 }

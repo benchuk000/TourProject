@@ -7,10 +7,14 @@ import common.classes.Order;
 import common.classes.Tour;
 import common.classes.User;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Controller implements ActionListener {
     public static State currentState = new State();
@@ -41,14 +45,13 @@ public class Controller implements ActionListener {
                 user = signIn();
                 if (user != null) {
                     MenuView menuView = new MenuView();
+                    menuView.setData(user);
                     currentState.setCurrentUser(user);
                 }
                 break;
             case "signUp":
                 user = signUp();
                 if(user != null) {
-                    //MenuView menuView = new MenuView();
-                    //currentState.setCurrentUser(user);
                     SignInView signInView = new SignInView();
                 }
                 break;
@@ -75,8 +78,15 @@ public class Controller implements ActionListener {
 
             case "viewTour":{
                 TourView tourView = new TourView();
+                currentState.setCurrentFrame(tourView);
 
-                tourView.setData(currentState.getSelectedTour());
+                tourView.setData(currentState.getCurrentUser(), currentState.getSelectedTour());
+
+                ImageIcon image = Action.getImageByLink(currentState.getSelectedTour().getPhotoLink());
+
+                if (image != null){
+                    tourView.getPhotoLabel().setIcon(image);
+                }
 
                 break;
             }
@@ -86,6 +96,8 @@ public class Controller implements ActionListener {
             }
             case "backToMenu":{
                 MenuView menuView = new MenuView();
+                menuView.setData(currentState.getCurrentUser());
+                currentState.setCurrentFrame(menuView);
                 break;
             }
             case "viewProfile":{
@@ -99,7 +111,7 @@ public class Controller implements ActionListener {
                 orderView.setData(user, Action.getOrders(new Order(
                         0,
                         currentState.getCurrentUser(),
-                        new Tour(0,"","","",null,null, 0, 0)
+                        new Tour(0,"","","", null, null, 0, 0, "")
                 )));
 
                 break;
@@ -125,6 +137,42 @@ public class Controller implements ActionListener {
                     currentState.setCurrentUser(user);
                     ViewEditUser viewEditOrder = new ViewEditUser();
                     viewEditOrder.setData(currentState.getCurrentUser());
+                }
+
+                break;
+            }
+            case "editPhoto":{
+                File file = Action.readFile(currentState.getCurrentFrame());
+
+                if (file != null){
+                    BufferedImage image = null;
+
+                    try {
+                        image = ImageIO.read(file);
+                        ImageIcon imageIcon = new ImageIcon(image);
+
+                        TourView tourView = (TourView) currentState.getCurrentFrame();
+
+                        tourView.getPhotoLabel().setIcon(imageIcon);
+                        tourView.setPhotoFile(file);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                break;
+            }
+            case "editTour":{
+                Tour tour = editTour();
+
+                if (tour != null){
+                    currentState.setSelectedTour(tour);
+                    TourView tourView = new TourView();
+                    tourView.setData(currentState.getCurrentUser(), currentState.getSelectedTour());
+                    ImageIcon image = Action.getImageByLink(currentState.getSelectedTour().getPhotoLink());
+
+                    if (image != null){
+                        tourView.getPhotoLabel().setIcon(image);
+                    }
                 }
 
                 break;
@@ -184,5 +232,14 @@ public class Controller implements ActionListener {
             JOptionPane.showMessageDialog(mainFrame, "Проверьте введенные данные!","Ошибка", JOptionPane.PLAIN_MESSAGE);
         }
         return user;
+    }
+    private Tour editTour() {
+        Tour tour = Action.updateTour((TourView) view, currentState.getSelectedTour());
+
+        if (tour == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Проверьте введенные данные!","Ошибка", JOptionPane.PLAIN_MESSAGE);
+        }
+
+        return tour;
     }
 }

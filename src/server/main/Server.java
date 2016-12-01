@@ -10,6 +10,12 @@ import server.models.DAO.TourDAO;
 import server.models.DAO.UserDAO;
 import server.models.DAOFactory.DAOFactory;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -116,5 +122,45 @@ public class Server implements API{
         boolean Removed = orderDAO.deleteOrder(id);
 
         return Removed;
+    }
+
+    @Override
+    public boolean updateTour(int id, Tour tour) {
+        return tourDAO.updateTour(id, tour);
+    }
+
+    @Override
+    public boolean savePhoto(ImageIcon icon, String nameOfFile) throws RemoteException {
+        BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics g = bi.createGraphics();
+
+        icon.paintIcon(null, g, 0,0);
+        g.dispose();
+
+        File outputfile = new File("/Users/olya/Documents/TourProject/src/server/photos/" + nameOfFile);
+
+        try {
+            ImageIO.write(bi, "png", outputfile);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public ImageIcon getImageByLink(String link) throws RemoteException {
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(new File("/Users/olya/Documents/TourProject/src/server/photos/" + link));
+
+            return new ImageIcon(image);
+        } catch (IOException e) {
+            System.out.println("Error reading image");
+        }
+
+        return null;
     }
 }

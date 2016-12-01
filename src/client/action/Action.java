@@ -6,6 +6,8 @@ import common.classes.Order;
 import common.classes.Tour;
 import common.classes.User;
 
+import javax.swing.*;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -80,7 +82,8 @@ public class Action {
                         date1,
                         date2,
                         view.getCostField().getText().equals("")? 0 : Integer.parseInt(view.getCostField().getText()),
-                        view.getCountOfDaysField().getText().equals("")? 0 : Integer.parseInt(view.getCountOfDaysField().getText())
+                        view.getCountOfDaysField().getText().equals("")? 0 : Integer.parseInt(view.getCountOfDaysField().getText()),
+                        ""
                 );
             }
 
@@ -168,6 +171,80 @@ public class Action {
         }
 
         return null;
+    }
 
+    public static File readFile(JFrame view) {
+        final JFileChooser fc = new JFileChooser();
+
+        int returnVal = fc.showOpenDialog(view);
+
+        File file = null;
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            return fc.getSelectedFile();
+        }
+
+        return null;
+    }
+
+    public static Tour updateTour(TourView view, Tour selectedTour){
+        String photoLink = "";
+        File photoFile = view.getPhotoFile();
+
+        if (photoFile != null) {
+            if (savePhoto((ImageIcon) view.getPhotoLabel().getIcon(), photoFile.getName())) {
+                photoLink = photoFile.getName();
+            }
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = null;
+        Date date2 = null;
+        try {
+            date1 = format.parse(view.getDateField1().getText());
+            date2 = format.parse(view.getDateField2().getText());
+            Tour updatedTour = new Tour(
+                    selectedTour.getId(),
+                    selectedTour.getName(),
+                    view.getCountryField().getText(),
+                    selectedTour.getCity(),
+                    date1,
+                    date2,
+                    selectedTour.getCost(),
+                    selectedTour.getCountOfDays(),
+                    photoLink
+            );
+
+            boolean isUpdated = rmi.getStub().updateTour(updatedTour.getId(), updatedTour);
+
+            if (isUpdated) return updatedTour;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static ImageIcon getImageByLink(String link){
+        try {
+            return rmi.getStub().getImageByLink(link);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    public static boolean savePhoto(ImageIcon image, String name){
+        try {
+            return rmi.getStub().savePhoto(image, name);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

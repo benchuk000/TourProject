@@ -10,6 +10,10 @@ public class Frame extends JFrame{
 
     }
 
+    public void setData(Serializable obj1, Serializable obj2){
+
+    }
+
     public void setData(Serializable obj){
 
     }
